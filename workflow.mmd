@@ -1,61 +1,57 @@
 flowchart TD
-    User(["👤 User\nasks a question"])
+    User(["👤 User"])
 
-    subgraph orchestrator["🎯 orchestrator  ·  interprets & decomposes"]
-        O1["Analyze query\nIdentify query type"]
-        O2["Decompose into 3 angles\nWrite executor prompts"]
-        O3["Compile results\nPrioritize OK verdicts"]
-        O4["Write final report"]
+    subgraph orchestrator["🎯 Orchestrator"]
+        O1["Decompose into 3 angles"]
+        O2["Compile & write report"]
     end
 
-    subgraph executors["🔍 executor ×3  ·  parallel investigation"]
-        E1["Thread A\n[angle 1]\nInvestigate"]
-        E2["Thread B\n[angle 2]\nInvestigate"]
-        E3["Thread C\n[angle 3]\nInvestigate"]
+    subgraph executors["🔍 Executor ×3  — parallel"]
+        E1["Angle A"]
+        E2["Angle B"]
+        E3["Angle C"]
     end
 
-    subgraph evaluators["✅ evaluator ×3  ·  fact checking"]
-        EV1["Verify A's claims\nCheck sources"]
-        EV2["Verify B's claims\nCheck sources"]
-        EV3["Verify C's claims\nCheck sources"]
+    subgraph evaluators["✅ Evaluator ×3"]
+        EV1["Verify A"]
+        EV2["Verify B"]
+        EV3["Verify C"]
     end
 
-    Codebase[("📁 Sources\n(files · docs · web)")]
-    Report(["📄 Final report\n(answer · confidence · sources)"])
+    Sources[("📁 Sources")]
+    Report(["📄 Report"])
 
     User --> O1
-    O1 --> O2
 
-    O2 -->|"spawn 3 in parallel"| E1
-    O2 -->|"spawn 3 in parallel"| E2
-    O2 -->|"spawn 3 in parallel"| E3
+    O1 -->|"spawn"| E1
+    O1 -->|"spawn"| E2
+    O1 -->|"spawn"| E3
 
-    E1 <-->|"read · search"| Codebase
-    E2 <-->|"read · search"| Codebase
-    E3 <-->|"read · search"| Codebase
+    E1 <-->|"search"| Sources
+    E2 <-->|"search"| Sources
+    E3 <-->|"search"| Sources
 
-    E1 -->|"findings ready"| EV1
-    E2 -->|"findings ready"| EV2
-    E3 -->|"findings ready"| EV3
+    E1 -->|"findings"| EV1
+    E2 -->|"findings"| EV2
+    E3 -->|"findings"| EV3
 
-    EV1 <-->|"verify claims"| Codebase
-    EV2 <-->|"verify claims"| Codebase
-    EV3 <-->|"verify claims"| Codebase
+    EV1 <-->|"verify"| Sources
+    EV2 <-->|"verify"| Sources
+    EV3 <-->|"verify"| Sources
 
-    EV1 -->|"OK / NOK"| E1
-    EV2 -->|"OK / NOK"| E2
-    EV3 -->|"OK / NOK"| E3
+    EV1 -->|"OK/NOK"| E1
+    EV2 -->|"OK/NOK"| E2
+    EV3 -->|"OK/NOK"| E3
 
-    E1 -->|"findings + verdict"| O3
-    E2 -->|"findings + verdict"| O3
-    E3 -->|"findings + verdict"| O3
+    E1 -->|"verdict"| O2
+    E2 -->|"verdict"| O2
+    E3 -->|"verdict"| O2
 
-    O3 --> O4
-    O4 --> Report
+    O2 --> Report
 
     style orchestrator fill:#ede9fe,stroke:#7c3aed,color:#2e1065
     style executors fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
     style evaluators fill:#dcfce7,stroke:#22c55e,color:#14532d
-    style Codebase fill:#fef9c3,stroke:#ca8a04,color:#713f12
+    style Sources fill:#fef9c3,stroke:#ca8a04,color:#713f12
     style User fill:#f1f5f9,stroke:#64748b,color:#1e293b
     style Report fill:#f0fdf4,stroke:#16a34a,color:#14532d
