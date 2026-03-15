@@ -1,0 +1,59 @@
+name: dummy
+description: Simple multi-agent workflow with parallel executors and hallucination evaluation
+version: 1
+max_depth: 2
+
+agents:
+  - name: orchestrator
+    file: orchestrator.md
+    mode: primary
+    model: openrouter/qwen/qwen3-coder-30b-a3b-instruct
+    calls: [executor]
+
+  - name: executor
+    file: executor.md
+    mode: subagent
+    model: openrouter/qwen/qwen3-coder-30b-a3b-instruct
+    calls: [evaluator]
+
+  - name: evaluator
+    file: evaluator.md
+    mode: subagent
+    model: openrouter/qwen/qwen3-coder-30b-a3b-instruct
+    calls: []
+
+mock_responses:
+  executor:
+    - trigger: ".*"
+      response: |
+        ## Investigation thread
+        Analyzing from the assigned angle.
+
+        ## Findings
+        Found relevant information. The key point is documented below.
+
+        ## Evidence
+        | Claim | Source | Location |
+        |-------|--------|----------|
+        | Core finding | file.txt | line 42 |
+        | Supporting detail | file.txt | line 87 |
+
+        ## Reasoning
+        Based on the evidence gathered, the answer follows logically from the cited sources.
+
+        ## Evaluator check needed
+        I believe I have scoped the solution. Ready for verification.
+
+  evaluator:
+    - trigger: ".*"
+      response: |
+        VERDICT: OK
+
+        ## Verification results
+        | Claim | Source | Location | Status | Notes |
+        |-------|--------|----------|--------|-------|
+        | Core finding | file.txt | line 42 | ✓ | Content matches claim |
+        | Supporting detail | file.txt | line 87 | ✓ | Content matches claim |
+
+        ## Summary
+        Both cited sources exist and contain the claimed content. No hallucinations detected.
